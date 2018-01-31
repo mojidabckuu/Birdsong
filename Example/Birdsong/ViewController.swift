@@ -64,7 +64,7 @@ class ViewController: UIViewController {
         super.viewDidAppear(animated)
 
         // After connection, set up a channel and join it.
-        socket.onConnect = {
+        socket.onConnect = { socket in
             self.channel = self.socket.channel("rooms:lobby", payload: ["user": "test"])
 
             self.channel?.on("new:msg", callback: { response in

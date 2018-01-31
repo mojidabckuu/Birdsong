@@ -18,8 +18,8 @@ public final class Socket {
     fileprivate var socket: WebSocket
     public var enableLogging = true
     
-    public var onConnect: (() -> ())?
-    public var onDisconnect: ((Error?) -> ())?
+    public var onConnect: ((Socket) -> ())?
+    public var onDisconnect: ((Socket, Error?) -> ())?
     
     fileprivate(set) public var channels: [String: Channel] = [:]
     
@@ -156,13 +156,13 @@ public final class Socket {
 extension Socket: WebSocketDelegate {
     public func websocketDidConnect(socket: WebSocketClient) {
         log("Connected to: \(self.socket.currentURL)")
-        onConnect?()
+        onConnect?(self)
         queueHeartbeat()
     }
 
     public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         log("Disconnected from: \(self.socket.currentURL)")
-        onDisconnect?(error)
+        onDisconnect?(self, error)
 
         // Reset state.
         awaitingResponses.removeAll()
